@@ -18,6 +18,10 @@ public final class Record {
     this.values = values;
   }
 
+	public Map<String, Object> getValues() {
+		return values;
+	}
+
   public Set<String> columnNames() {
     return values.keySet();
   }
