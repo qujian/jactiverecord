@@ -1,5 +1,6 @@
 package me.zzp.ar;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,6 +88,10 @@ public final class Record {
   public String getStr(String name) {
     return get(name);
   }
+
+    public BigDecimal getBigDecimal(String name) {
+        return get(name);
+    }
 
   public <E> E get(String name, Class<E> type) {
     return type.cast(get(name));
