@@ -1,23 +1,14 @@
 package me.zzp.ar;
 
-import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import me.zzp.ar.ex.IllegalFieldNameException;
 import me.zzp.ar.ex.SqlExecuteException;
 import me.zzp.ar.sql.SqlBuilder;
 import me.zzp.ar.sql.TSqlBuilder;
 import me.zzp.util.Seq;
+
+import java.lang.reflect.Method;
+import java.sql.*;
+import java.util.*;
 
 /**
  * 表对象。
@@ -142,9 +133,7 @@ public final class Table {
       values[index] = e.getValue();
       index++;
     }
-    Seq.assignAt(fields, Seq.array(-2, -1), "created_at", "updated_at");
-    Seq.assignAt(types, Seq.array(-2, -1), Types.TIMESTAMP, Types.TIMESTAMP);
-    Seq.assignAt(values, Seq.array(-2, -1), DB.now(), DB.now());
+	  //createStamp(fields, types, values);
 
     SqlBuilder sql = new TSqlBuilder();
     sql.insert().into(name).values(fields);
@@ -165,6 +154,12 @@ public final class Table {
       dbo.close(call);
     }
   }
+
+	private void createStamp(String[] fields, int[] types, Object[] values) {
+		Seq.assignAt(fields, Seq.array(-2, -1), "created_at", "updated_at");
+		Seq.assignAt(types, Seq.array(-2, -1), Types.TIMESTAMP, Types.TIMESTAMP);
+		Seq.assignAt(values, Seq.array(-2, -1), DB.now(), DB.now());
+	}
 
   /**
    * 根据现有的Record创建新的Record.
@@ -195,14 +190,18 @@ public final class Table {
       index++;
     }
 
-    fields[columns.size()] = "updated_at";
-    types[columns.size()] = Types.TIMESTAMP;
-    values[columns.size()] = DB.now();
+	  //updateStamp(fields, types, values);
 
     SqlBuilder sql = new TSqlBuilder();
     sql.update(name).set(fields).where(String.format("%s = %d", primaryKey, record.getInt("id")));
     dbo.execute(sql.toString(), values, types);
   }
+
+	private void updateStamp(String[] fields, int[] types, Object[] values) {
+		fields[columns.size()] = "updated_at";
+		types[columns.size()] = Types.TIMESTAMP;
+		values[columns.size()] = DB.now();
+	}
 
   public void delete(Record record) {
     int id = record.get("id");
