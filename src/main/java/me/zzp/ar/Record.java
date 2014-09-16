@@ -1,6 +1,8 @@
 package me.zzp.ar;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -131,4 +133,14 @@ public final class Record {
     }
     return line.toString();
   }
+    /**
+     * ///得到去掉下标values的数组
+     */
+    public static List<Map<String,Object>> getMapValues(List<Record> valuesList) {
+        List<Map<String,Object>> resList = new ArrayList<>();
+        for(Record record : valuesList) {
+            resList.add(record.getValues());
+        }
+        return resList;
+    }
 }
