@@ -1,29 +1,13 @@
 package me.zzp.ar;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ServiceLoader;
-import java.util.Set;
-import javax.sql.DataSource;
 import me.zzp.ar.d.Dialect;
-import me.zzp.ar.ex.DBOpenException;
-import me.zzp.ar.ex.IllegalTableNameException;
-import me.zzp.ar.ex.SqlExecuteException;
-import me.zzp.ar.ex.TransactionException;
-import me.zzp.ar.ex.UnsupportedDatabaseException;
+import me.zzp.ar.ex.*;
 import me.zzp.ar.pool.SingletonDataSource;
 import me.zzp.util.Seq;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
 
 /**
  * 数据库对象。
@@ -278,7 +262,8 @@ public final class DB {
   }
   
   public Table createTable(String name, String... columns) {
-    String template = "create table %s (id %s, %s, created_at timestamp, updated_at timestamp)";
+    //String template = "create table %s (id %s, %s, created_at timestamp, updated_at timestamp)";
+	  String template = "create table %s (id %s, %s)";
     execute(String.format(template, name, dialect.getIdentity(), Seq.join(Arrays.asList(columns), ", ")));
     return active(name);
   }

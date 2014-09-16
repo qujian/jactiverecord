@@ -123,9 +123,9 @@ public final class Table {
       data.put(key, value);
     }
 
-    String[] fields = new String[data.size() + 2];
-    int[] types = new int[data.size() + 2];
-    Object[] values = new Object[data.size() + 2];
+    String[] fields = new String[data.size()]; // + 2
+    int[] types = new int[data.size()]; // + 2
+    Object[] values = new Object[data.size()]; // + 2
     int index = 0;
     for (Map.Entry<String, Object> e : data.entrySet()) {
       fields[index] = e.getKey();
