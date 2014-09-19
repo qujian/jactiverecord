@@ -35,7 +35,7 @@ public final class DB {
 
   public static DB open(String url, Properties info) {
     try {
-      return open(new SingletonDataSource(url, info));
+      return open(SingletonDataSource.getInstance(url, info));
     } catch (SQLException e) {
       throw new DBOpenException(e);
     }

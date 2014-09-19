@@ -1,5 +1,6 @@
 package me.zzp.ar.pool;
 
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  * <p>jActiveRecord默认DataSource实现，永远只返回同一个数据库连接。
@@ -17,8 +17,9 @@ import javax.sql.DataSource;
  * @author redraiment
  */
 public final class SingletonDataSource implements DataSource {
-  private final Connection instance;
 
+  private final Connection connection;
+	private static SingletonDataSource instance;
   /**
    * 提供连接数据库基本信息。
    * 
@@ -26,7 +27,7 @@ public final class SingletonDataSource implements DataSource {
    * @param info 包含用户名、密码等登入信息。
    * @throws java.sql.SQLException 连接数据库失败
    */
-  public SingletonDataSource(String url, Properties info) throws SQLException {
+  private SingletonDataSource(String url, Properties info) throws SQLException {
     final Connection c = DriverManager.getConnection(url, info);
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
@@ -38,8 +39,19 @@ public final class SingletonDataSource implements DataSource {
         }
       }
     });
-    instance = new SingletonConnection(c);
+    connection = new SingletonConnection(c);
   }
+
+	public static SingletonDataSource getInstance(String url, Properties info) throws SQLException {
+		if(instance == null) {
+			synchronized (SingletonDataSource.class) {
+				if(instance == null) {
+					instance = new SingletonDataSource(url, info);
+				}
+			}
+		}
+		return instance;
+	}
 
   /**
    * 每次调用时均返回一个新的数据库连接。
@@ -49,7 +61,7 @@ public final class SingletonDataSource implements DataSource {
    */
   @Override
   public Connection getConnection() throws SQLException {
-    return instance;
+    return connection;
   }
 
   /**
@@ -60,7 +72,7 @@ public final class SingletonDataSource implements DataSource {
    */
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
-    return instance;
+    return connection;
   }
 
   /**

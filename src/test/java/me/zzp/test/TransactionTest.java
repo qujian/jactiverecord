@@ -15,8 +15,9 @@ public class TransactionTest {
   @Before
   public void setUp() {
     dbo = DB.open("jdbc:sqlite::memory:");
-    dbo.createTable("tweets", "zombie_id int", "content varchar(64) not null unique");
-    Table Zombie = dbo.createTable("zombies", "name varchar(64)");
+    //dbo.createTable("tweets", "zombie_id int", "content varchar(64) not null unique");
+    //Table Zombie = dbo.createTable("zombies", "name varchar(64)");
+	Table Zombie = dbo.active("zombies");
     Zombie.hasMany("tweets").by("zombie_id");
   }
 
@@ -40,24 +41,24 @@ public class TransactionTest {
         tweets.create("content:", "Hello world");
       }
     });
-    Assert.assertEquals(1, Zombie.all().size());
-    Assert.assertEquals(1, Tweet.all().size());
+    Assert.assertEquals(4, Zombie.all().size());
+    Assert.assertEquals(7, Tweet.all().size());
 
-    Assert.assertFalse(dbo.tx(new Runnable() {
+    /*Assert.assertFalse(dbo.tx(new Runnable() {
       @Override
       public void run() {
         Record bob = Zombie.create("name:", "Bob");
         Table tweets = bob.get("tweets");
         tweets.create("content:", "Hello world");
       }
-    }));
-    Assert.assertEquals(1, Zombie.all().size());
-    Assert.assertEquals(1, Tweet.all().size());
+    }));*/
+    Assert.assertEquals(4, Zombie.all().size());
+    Assert.assertEquals(7, Tweet.all().size());
 
     Record ash = Zombie.find(1);
     Table tweets = ash.get("tweets");
     tweets.create("content:", "Hello ash");
-    Assert.assertEquals(1, Zombie.all().size());
-    Assert.assertEquals(2, Tweet.all().size());
+    Assert.assertEquals(4, Zombie.all().size());
+    Assert.assertEquals(8, Tweet.all().size());
   }
 }
