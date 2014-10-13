@@ -254,7 +254,7 @@ public final class Table {
         sql.where(condition);
       }
     }
-    return sql.orderBy(primaryKey);
+    return sql;
   }
 
   public Record first() {
