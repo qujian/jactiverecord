@@ -8,6 +8,7 @@ import me.zzp.util.Seq;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 数据库对象。
@@ -33,13 +34,26 @@ public final class DB {
     return open(url, info);
   }
 
-  public static DB open(String url, Properties info) {
-    try {
-      return open(SingletonDataSource.getInstance(url, info));
-    } catch (SQLException e) {
-      throw new DBOpenException(e);
+    private static final ConcurrentHashMap<String, DB> _cachedDB = new ConcurrentHashMap<>();
+
+    public static DB open(String url, Properties info) {
+        try {
+            DB ret = _cachedDB.get(url);
+            if(ret != null)
+                return ret;
+
+            synchronized(DB.class) {
+                DB ret2 = _cachedDB.get(url);
+                if(ret2 != null)
+                    return ret2;
+                DB dbNew = open(new SingletonDataSource(url, info));
+                _cachedDB.put(url, dbNew);
+                return dbNew;
+            }
+        } catch (SQLException e) {
+            throw new DBOpenException(e);
+        }
     }
-  }
 
   public static DB open(DataSource pool) {
     try (Connection base = pool.getConnection()) {

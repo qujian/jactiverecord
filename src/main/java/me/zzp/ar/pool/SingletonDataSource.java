@@ -27,7 +27,7 @@ public final class SingletonDataSource implements DataSource {
    * @param info 包含用户名、密码等登入信息。
    * @throws java.sql.SQLException 连接数据库失败
    */
-  private SingletonDataSource(String url, Properties info) throws SQLException {
+  public SingletonDataSource(String url, Properties info) throws SQLException {
     final Connection c = DriverManager.getConnection(url, info);
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
@@ -41,17 +41,6 @@ public final class SingletonDataSource implements DataSource {
     });
     connection = new SingletonConnection(c);
   }
-
-	public static SingletonDataSource getInstance(String url, Properties info) throws SQLException {
-		if(instance == null) {
-			synchronized (SingletonDataSource.class) {
-				if(instance == null) {
-					instance = new SingletonDataSource(url, info);
-				}
-			}
-		}
-		return instance;
-	}
 
   /**
    * 每次调用时均返回一个新的数据库连接。
@@ -77,7 +66,7 @@ public final class SingletonDataSource implements DataSource {
 
   /**
    * 不支持，永远不会被调用。
-   * 
+   *
    * @return 无
    * @throws SQLException 从不
    */
@@ -88,7 +77,7 @@ public final class SingletonDataSource implements DataSource {
 
   /**
    * 不支持，永远不会被调用。
-   * 
+   *
    * @throws SQLException 从不
    */
   @Override
@@ -98,7 +87,7 @@ public final class SingletonDataSource implements DataSource {
 
   /**
    * 不支持，永远不会被调用。
-   * 
+   *
    * @throws SQLException 从不
    */
   @Override
@@ -108,7 +97,7 @@ public final class SingletonDataSource implements DataSource {
 
   /**
    * 不支持，永远不会被调用。
-   * 
+   *
    * @return 无
    * @throws SQLException 从不
    */
@@ -119,7 +108,7 @@ public final class SingletonDataSource implements DataSource {
 
   /**
    * 不支持，永远不会被调用。
-   * 
+   *
    * @return 无
    * @throws SQLFeatureNotSupportedException 从不
    */
@@ -130,7 +119,7 @@ public final class SingletonDataSource implements DataSource {
 
   /**
    * 不支持，永远不会被调用。
-   * 
+   *
    * @param <T> 类型
    * @return 无
    * @throws SQLException 从不
@@ -142,7 +131,7 @@ public final class SingletonDataSource implements DataSource {
 
   /**
    * 不支持，永远不会被调用。
-   * 
+   *
    * @return 无
    * @throws SQLException 从不
    */
