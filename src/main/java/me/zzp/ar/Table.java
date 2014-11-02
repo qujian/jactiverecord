@@ -204,11 +204,11 @@ public final class Table {
 	}
 
   public void delete(Record record) {
-    int id = record.get("id");
-    SqlBuilder sql = new TSqlBuilder();
-    sql.delete().from(name).where(String.format("%s = %d", primaryKey, id));
-    dbo.execute(sql.toString());
-  }
+        int id = record.get("id");
+        SqlBuilder sql = new TSqlBuilder();
+        sql.delete().from(name).where(String.format("%s = %d", primaryKey, id));
+        dbo.execute(sql.toString());
+    }
 
   public void purge() {
     // TODO: need enhancement
@@ -265,6 +265,10 @@ public final class Table {
     return select().where(condition).limit(1).one(args);
   }
 
+  public Record first(String[] columns,String condition, Object... args) {
+    return select(columns).where(condition).limit(1).one(args);
+  }
+
   public Record last() {
     return select().orderBy(primaryKey.concat(" desc")).limit(1).one();
   }
@@ -284,13 +288,13 @@ public final class Table {
    * @return 返回符合条件的第一条记录
    */
   public Record findA(String key, Object value) {
-    key = DB.parseKeyParameter(key);
-    if (value != null) {
-      return first(key.concat(" = ?"), value);
-    } else {
-      return first(key.concat(" is null"));
+        key = DB.parseKeyParameter(key);
+        if (value != null) {
+            return first(key.concat(" = ?"), value);
+        } else {
+            return first(key.concat(" is null"));
+        }
     }
-  }
 
   public List<Record> findBy(String key, Object value) {
     key = DB.parseKeyParameter(key);
@@ -307,6 +311,9 @@ public final class Table {
 
   public List<Record> where(String condition, Object... args) {
     return select().where(condition).all(args);
+  }
+  public List<Record> where(String[] columns,String condition, Object... args) {
+    return select(columns).where(condition).all(args);
   }
 
   public List<Record> paging(int page, int size) {
